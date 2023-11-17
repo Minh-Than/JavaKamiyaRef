@@ -117,7 +117,6 @@ public class MainFrame extends JFrame {
                     sqrInt = Integer.parseInt(sqrIntText.getText());
                     sqrSqrt = Integer.parseInt(sqrSqrtText.getText());
                 } catch (NumberFormatException ex) {
-                    // ex.printStackTrace();
                     JOptionPane.showMessageDialog(null, "The input must only be integer. Please try again.", "Wrong Input Format", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
@@ -132,7 +131,6 @@ public class MainFrame extends JFrame {
                     prefInt = Integer.parseInt(prefIntText.getText());
                     prefSqrt = Integer.parseInt(prefSqrtText.getText());
                 } catch (NumberFormatException ex) {
-                    // ex.printStackTrace();
                     JOptionPane.showMessageDialog(null, "The input must only be integer. Please try Again.", "Wrong Input Format", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
@@ -207,14 +205,12 @@ public class MainFrame extends JFrame {
                 applicationModel.setResultData(resultData);
 
                 nextButton.setEnabled(true);
-                backButton.setEnabled(false);
 
                 bottomPanel.validate();
                 bottomPanel.repaint();
             }
         });
 
-        //TODO: next and previous buttons' listeners
         nextButton.addActionListener(e -> {
             backButton.setEnabled(true);
             if(applicationModel.getResultIndex() < applicationModel.getResultData().size() - 1){
