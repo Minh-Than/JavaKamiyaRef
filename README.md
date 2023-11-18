@@ -5,6 +5,6 @@ _This project is an attempt to create a non-browser version of an existing refer
 ### TODO List:
 - [ ] Fix preferred ratio not being taken into results' orderings
 - [ ] Implement the flags
-- [ ] Show the current result index somewhere
+- [x] Show the current result index somewhere
 - [ ] Clear results to empty the panel *(Optional)*
 - [ ] Dynamically draw reference images base on decimal and direction instead of just finding and slapping resource images *(Optional but super cool and difficult)*
