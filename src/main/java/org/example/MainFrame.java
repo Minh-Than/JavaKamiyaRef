@@ -10,9 +10,25 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
 
-public class MainFrame extends JFrame {
-    public String[] negIntFlags = {"None", "Allow -int on either axis", "No -int"};
-    public String[] negSqrtFlags = {"None", "Allow -√2 on either axis", "No -√2"};
+public class MainFrame extends JFrame{
+    private final JFrame frame;
+    private final JSplitPane splitPane;
+    private final JPanel topPanel;
+    private final JPanel bottomPanel;
+    private final JPanel inputPanel;
+    private final JPanel flagPanel;
+    private final JPanel findPanel;
+    private final JTextField sqrIntText;
+    private final JTextField sqrSqrtText;
+    private final JTextField prefIntText;
+    private final JTextField prefSqrtText;
+    private final JPanel buttonPanel;
+    private final JButton nextButton;
+    private final JButton backButton;
+    private final JButton clearButton;
+    private final JButton findButton;
+    public String[] negIntFlags = {"None", "Allow -int on an axis", "No -int"};
+    public String[] negSqrtFlags = {"None", "Allow -√2 on an axis", "No -√2"};
     public JComboBox<String> negIntCB = new JComboBox<>(negIntFlags);
     public JComboBox<String> negSqrtCB = new JComboBox<>(negSqrtFlags);
     public Map<Double, PresetData> presetDict = new Hashtable<>();
@@ -25,32 +41,32 @@ public class MainFrame extends JFrame {
     public MainFrame(){
         initializePresetData(presetDict);
 
-        JFrame frame = new JFrame();
+        frame = new JFrame();
         frame.setPreferredSize(new Dimension(775, 650));
-        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(new GridLayout());
         frame.setTitle("Kamiya Reference Finder");
         frame.setResizable(false);
 
-        JSplitPane splitPane = new JSplitPane();
-        JPanel topPanel = new JPanel();
-        JPanel bottomPanel = new DrawPanel(applicationModel);
+        splitPane = new JSplitPane();
+        topPanel = new JPanel();
+        bottomPanel = new DrawPanel(applicationModel);
 
-        JPanel inputPanel = new JPanel(new GridBagLayout());
-        JTextField sqrIntText = new JTextField();
-        JTextField sqrSqrtText = new JTextField();
-        JTextField prefIntText = new JTextField();
-        JTextField prefSqrtText = new JTextField();
+        inputPanel = new JPanel(new GridBagLayout());
+        sqrIntText = new JTextField();
+        sqrSqrtText = new JTextField();
+        prefIntText = new JTextField();
+        prefSqrtText = new JTextField();
 
-        JPanel flagPanel = new JPanel(new GridBagLayout());
+        flagPanel = new JPanel(new GridBagLayout());
 
-        JPanel buttonPanel = new JPanel();
-        JButton nextButton = new JButton("Next");
-        JButton backButton = new JButton("Back");
-        JButton clearButton = new JButton("Clear");
+        buttonPanel = new JPanel();
+        nextButton = new JButton("Next");
+        backButton = new JButton("Back");
+        clearButton = new JButton("Clear");
 
-        JPanel findPanel = new JPanel();
-        JButton findButton = new JButton("Find");
+        findPanel = new JPanel();
+        findButton = new JButton("Find");
 
         frame.getContentPane().add(splitPane);
 
@@ -80,7 +96,7 @@ public class MainFrame extends JFrame {
         gbc.gridx = 4; gbc.gridy = 0;
         inputPanel.add(new JLabel("√2"), gbc);
         gbc.gridx = 0; gbc.gridy = 1;
-        inputPanel.add(new JLabel("Preferred ratio (optional):"), gbc);
+        inputPanel.add(new JLabel("Target ratio (optional):"), gbc);
         gbc.gridx = 1; gbc.gridy = 1;
         inputPanel.add(prefIntText, gbc);
         gbc.gridx = 2; gbc.gridy = 1;gbc.weightx=0;
@@ -99,7 +115,6 @@ public class MainFrame extends JFrame {
         gbc.gridx = 1; gbc.gridy = 1;
         flagPanel.add(negSqrtCB, gbc);
 
-
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
         buttonPanel.add(nextButton);
         nextButton.setEnabled(false);
@@ -110,7 +125,6 @@ public class MainFrame extends JFrame {
 
         findPanel.setLayout(new GridLayout());
         findPanel.add(findButton);
-
         topPanel.add(findPanel);
 
         findButton.addActionListener(e -> {
@@ -243,7 +257,6 @@ public class MainFrame extends JFrame {
                 bottomPanel.repaint();
             }
         });
-
         nextButton.addActionListener(e -> {
             applicationModel.setResultIndex(applicationModel.getResultIndex() + 1);
             if(applicationModel.getResultIndex() >= applicationModel.getResultData().size()){

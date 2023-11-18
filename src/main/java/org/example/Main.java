@@ -2,9 +2,9 @@ package org.example;
 
 import javax.swing.*;
 
-public class Main extends JFrame{
+public class Main{
     public static void main(String[] args){
-        new MainFrame();
+        SwingUtilities.invokeLater(MainFrame::new);
     }
 }
 
