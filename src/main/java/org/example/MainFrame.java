@@ -11,7 +11,6 @@ import java.util.Hashtable;
 import java.util.Map;
 
 public class MainFrame extends JFrame {
-    public int size = 500;
     public String[] negIntFlags = {"None", "No single -int", "No double -int"};
     public String[] negSqrtFlags = {"None", "No single -√2", "No double -√2"};
     public JComboBox<String> negIntCB = new JComboBox<>(negIntFlags);
@@ -53,7 +52,7 @@ public class MainFrame extends JFrame {
         frame.getContentPane().add(splitPane);
 
         splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);  // we want it to split the window vertically
-        splitPane.setDividerLocation(size / 5);               // the initial position of the divider is 200 (our window is 400 pixels high)
+        splitPane.setDividerLocation(-1);                     // the initial position of the divider is 200 (our window is 400 pixels high)
         splitPane.setTopComponent(topPanel);                  // at the top we want our "topPanel"
         splitPane.setBottomComponent(bottomPanel);            // and at the bottom we want our "bottomPanel"
         splitPane.setBorder(BorderFactory.createEmptyBorder());
