@@ -11,8 +11,8 @@ import java.util.Hashtable;
 import java.util.Map;
 
 public class MainFrame extends JFrame {
-    public String[] negIntFlags = {"None", "No single -int", "No double -int"};
-    public String[] negSqrtFlags = {"None", "No single -√2", "No double -√2"};
+    public String[] negIntFlags = {"None", "Allow -int on either axis", "No -int"};
+    public String[] negSqrtFlags = {"None", "Allow -√2 on either axis", "No -√2"};
     public JComboBox<String> negIntCB = new JComboBox<>(negIntFlags);
     public JComboBox<String> negSqrtCB = new JComboBox<>(negSqrtFlags);
     public Map<Double, PresetData> presetDict = new Hashtable<>();
@@ -88,11 +88,11 @@ public class MainFrame extends JFrame {
         inputPanel.add(new JLabel("√2"), gbc);
 
         gbc.gridx = 0; gbc.gridy = 0;
-        flagPanel.add(new JLabel("Filter -√2:"), gbc);
+        flagPanel.add(new JLabel("Int flag:"), gbc);
         gbc.gridx = 1; gbc.gridy = 0;
         flagPanel.add(negIntCB, gbc);
         gbc.gridx = 0; gbc.gridy = 1;
-        flagPanel.add(new JLabel("Filter -integer:"), gbc);
+        flagPanel.add(new JLabel("√2 flag:"), gbc);
         gbc.gridx = 1; gbc.gridy = 1;
         flagPanel.add(negSqrtCB, gbc);
 
@@ -167,6 +167,29 @@ public class MainFrame extends JFrame {
                                         continue;
                                     }
 
+                                    // negative integer flags
+                                    if(negIntCB.getSelectedIndex() == 1){
+                                        if((ixr1 < 0 || sqrInt - ixr1 < 0) && iyr1 < 0){
+                                            continue;
+                                        }
+                                    }
+                                    if(negIntCB.getSelectedIndex() == 2){
+                                        if(ixr1 < 0 || sqrInt - ixr1 < 0 || iyr1 < 0){
+                                            continue;
+                                        }
+                                    }
+
+                                    // negative sqrt(2) flags
+                                    if(negSqrtCB.getSelectedIndex() == 1){
+                                        if((ixr2 < 0 || sqrInt - ixr2 < 0) && iyr2 < 0){
+                                            continue;
+                                        }
+                                    }
+                                    if(negSqrtCB.getSelectedIndex() == 2){
+                                        if(ixr2 < 0 || sqrInt - ixr2 < 0 || iyr2 < 0){
+                                            continue;
+                                        }
+                                    }
                                     num += 1;
                                     ResultData tempRes = new ResultData(round(x1 / papersize, 5),
                                             round(y / papersize, 5),
@@ -324,11 +347,11 @@ public class MainFrame extends JFrame {
     }
 
     public static String output(int n1, int n2){
-        String result = "".concat(Integer.toString(n2)).concat("√2");
+        String result = n2 + "√2";
 
         if (n2 == 1) { result = "√2"; }
         if (n1 != 0) {
-            result = "".concat(Integer.toString(n1)).concat("+").concat(result);
+            result = n1 + "+" + result;
         }
         if (n2 == 0){ result = Integer.toString(n1); }
 
