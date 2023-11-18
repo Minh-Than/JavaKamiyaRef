@@ -45,9 +45,12 @@ public class MainFrame extends JFrame {
         JPanel flagPanel = new JPanel(new GridBagLayout());
 
         JPanel buttonPanel = new JPanel();
-        JButton findButton = new JButton("Find");
         JButton nextButton = new JButton("Next");
-        JButton backButton = new JButton("Previous");
+        JButton backButton = new JButton("Back");
+        JButton clearButton = new JButton("Clear");
+
+        JPanel findPanel = new JPanel();
+        JButton findButton = new JButton("Find");
 
         frame.getContentPane().add(splitPane);
 
@@ -98,11 +101,17 @@ public class MainFrame extends JFrame {
 
 
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
-        buttonPanel.add(findButton);
         buttonPanel.add(nextButton);
         nextButton.setEnabled(false);
         buttonPanel.add(backButton);
         backButton.setEnabled(false);
+        buttonPanel.add(clearButton);
+        clearButton.setEnabled(false);
+
+        findPanel.setLayout(new GridLayout());
+        findPanel.add(findButton);
+
+        topPanel.add(findPanel);
 
         findButton.addActionListener(e -> {
             int sqrInt;
@@ -227,6 +236,8 @@ public class MainFrame extends JFrame {
                 applicationModel.setResultData(resultData);
 
                 nextButton.setEnabled(true);
+                backButton.setEnabled(true);
+                clearButton.setEnabled(true);
 
                 bottomPanel.validate();
                 bottomPanel.repaint();
@@ -234,24 +245,26 @@ public class MainFrame extends JFrame {
         });
 
         nextButton.addActionListener(e -> {
-            backButton.setEnabled(true);
-            if(applicationModel.getResultIndex() < applicationModel.getResultData().size() - 1){
-                applicationModel.setResultIndex(applicationModel.getResultIndex() + 1);
-            }
-            if(applicationModel.getResultIndex() == applicationModel.getResultData().size() - 1){
-                nextButton.setEnabled(false);
+            applicationModel.setResultIndex(applicationModel.getResultIndex() + 1);
+            if(applicationModel.getResultIndex() >= applicationModel.getResultData().size()){
+                applicationModel.setResultIndex(0);
             }
             bottomPanel.validate();
             bottomPanel.repaint();
         });
         backButton.addActionListener(e -> {
-            nextButton.setEnabled(true);
-            if(applicationModel.getResultIndex() > 0){
-                applicationModel.setResultIndex(applicationModel.getResultIndex() - 1);
+            applicationModel.setResultIndex(applicationModel.getResultIndex() - 1);
+            if(applicationModel.getResultIndex() <= -1){
+                applicationModel.setResultIndex(applicationModel.getResultData().size() - 1);
             }
-            if(applicationModel.getResultIndex() == 0){
-                backButton.setEnabled(false);
-            }
+            bottomPanel.validate();
+            bottomPanel.repaint();
+        });
+        clearButton.addActionListener(e -> {
+            applicationModel.reset();
+            nextButton.setEnabled(false);
+            backButton.setEnabled(false);
+            clearButton.setEnabled(false);
             bottomPanel.validate();
             bottomPanel.repaint();
         });
