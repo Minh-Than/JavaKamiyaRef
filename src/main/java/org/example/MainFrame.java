@@ -4,6 +4,7 @@ import jakarta.inject.Inject;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -11,7 +12,6 @@ import java.util.Hashtable;
 import java.util.Map;
 
 public class MainFrame extends JFrame{
-    private final JFrame frame;
     private final JSplitPane splitPane;
     private final JPanel topPanel;
     private final JPanel bottomPanel;
@@ -40,13 +40,11 @@ public class MainFrame extends JFrame{
 
     public MainFrame(){
         initializePresetData(presetDict);
-
-        frame = new JFrame();
-        frame.setPreferredSize(new Dimension(775, 650));
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().setLayout(new GridLayout());
-        frame.setTitle("Kamiya Reference Finder");
-        frame.setResizable(false);
+        this.setPreferredSize(new Dimension(775, 650));
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.getContentPane().setLayout(new GridLayout());
+        this.setTitle("Kamiya Reference Finder");
+        this.setResizable(false);
 
         splitPane = new JSplitPane();
         topPanel = new JPanel();
@@ -68,7 +66,7 @@ public class MainFrame extends JFrame{
         findPanel = new JPanel();
         findButton = new JButton("Find");
 
-        frame.getContentPane().add(splitPane);
+        this.getContentPane().add(splitPane);
 
         splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);  // we want it to split the window vertically
         splitPane.setDividerLocation(-1);                     // the initial position of the divider is 200 (our window is 400 pixels high)
@@ -282,8 +280,10 @@ public class MainFrame extends JFrame{
             bottomPanel.repaint();
         });
 
-        frame.setVisible(true);
-        frame.pack();
+        setUpGlobalKeyBindings();
+
+        this.setVisible(true);
+        this.pack();
     }
 
     public static boolean isPowerOfTwo(int n){
@@ -382,5 +382,26 @@ public class MainFrame extends JFrame{
         if (n2 == 0){ result = Integer.toString(n1); }
 
         return result;
+    }
+
+    private void setUpGlobalKeyBindings() {
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e -> {
+            if(e.getID() == KeyEvent.KEY_RELEASED) {
+                int keyCode = e.getKeyCode();
+
+                if(keyCode == KeyEvent.VK_RIGHT) {
+                    nextButton.doClick();
+                    return true;  // consume the event
+                } else if(keyCode == KeyEvent.VK_LEFT) {
+                    backButton.doClick();
+                    return true;  // consume the event
+                } else if(keyCode == KeyEvent.VK_F){
+                    findButton.doClick();
+                    return true;
+                }
+            }
+
+            return false;  // allow the event to be processed by other listeners
+        });
     }
 }
