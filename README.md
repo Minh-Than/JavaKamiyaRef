@@ -39,3 +39,4 @@ If you want to clear the results to empty, click **Clear**.
 - [x] Show the current result index somewhere
 - [x] Clear results to empty the panel *(Optional)*
 - [ ] Dynamically draw reference images base on decimal and direction instead of just finding and slapping resource images *(Optional but super cool and difficult)*
+- [ ] Optimize results calculation *(Optional but super cool and difficult)*
