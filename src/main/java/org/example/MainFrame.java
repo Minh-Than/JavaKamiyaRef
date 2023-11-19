@@ -1,8 +1,11 @@
 package org.example;
 
-import jakarta.inject.Inject;
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.uiDesigner.core.Spacer;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
@@ -11,119 +14,41 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
 
-public class MainFrame extends JFrame{
-    private final JSplitPane splitPane;
-    private final JPanel topPanel;
-    private final JPanel bottomPanel;
-    private final JPanel inputPanel;
-    private final JPanel flagPanel;
-    private final JPanel findPanel;
-    private final JTextField sqrIntText;
-    private final JTextField sqrSqrtText;
-    private final JTextField prefIntText;
-    private final JTextField prefSqrtText;
-    private final JPanel buttonPanel;
-    private final JButton nextButton;
-    private final JButton backButton;
-    private final JButton clearButton;
-    private final JButton findButton;
-    public String[] negIntFlags = {"None", "Allow -int on an axis", "No -int"};
-    public String[] negSqrtFlags = {"None", "Allow -√2 on an axis", "No -√2"};
-    public JComboBox<String> negIntCB = new JComboBox<>(negIntFlags);
-    public JComboBox<String> negSqrtCB = new JComboBox<>(negSqrtFlags);
+public class MainFrame extends JFrame {
+    private JPanel panel1;
+    private JPanel topPanel;
+    private JPanel bottomPanel;
+    private JPanel inputPanel;
+    private JPanel flagPanel;
+    private JPanel buttonPanel;
+    private JPanel findPanel;
+    private JButton findButton;
+    private JButton nextButton;
+    private JButton backButton;
+    private JButton clearButton;
+    private JTextField sqrIntText;
+    private JTextField prefIntText;
+    private JTextField sqrSqrtText;
+    private JTextField prefSqrtText;
+    private JComboBox<String> negIntCB;
+    private JComboBox<String> negSqrtCB;
+
     public Map<Double, PresetData> presetDict = new Hashtable<>();
     public ArrayList<ResultData> resultData;
     private static int num;
 
-    @Inject
-    ApplicationModel applicationModel = new ApplicationModel();
+    private final ApplicationModel applicationModel;
 
-    public MainFrame(){
+    public MainFrame(ApplicationModel applicationModel) {
+        this.applicationModel = applicationModel;
+
+        $$$setupUI$$$();
         initializePresetData(presetDict);
-        this.setPreferredSize(new Dimension(775, 650));
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.getContentPane().setLayout(new GridLayout());
-        this.setTitle("Kamiya Reference Finder");
-        this.setResizable(false);
+        setUpGlobalKeyBindings();
 
-        splitPane = new JSplitPane();
-        topPanel = new JPanel();
-        bottomPanel = new DrawPanel(applicationModel);
-
-        inputPanel = new JPanel(new GridBagLayout());
-        sqrIntText = new JTextField();
-        sqrSqrtText = new JTextField();
-        prefIntText = new JTextField();
-        prefSqrtText = new JTextField();
-
-        flagPanel = new JPanel(new GridBagLayout());
-
-        buttonPanel = new JPanel();
-        nextButton = new JButton("Next");
-        backButton = new JButton("Back");
-        clearButton = new JButton("Clear");
-
-        findPanel = new JPanel();
-        findButton = new JButton("Find");
-
-        this.getContentPane().add(splitPane);
-
-        splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);  // we want it to split the window vertically
-        splitPane.setDividerLocation(-1);                     // the initial position of the divider is 200 (our window is 400 pixels high)
-        splitPane.setTopComponent(topPanel);                  // at the top we want our "topPanel"
-        splitPane.setBottomComponent(bottomPanel);            // and at the bottom we want our "bottomPanel"
-        splitPane.setBorder(BorderFactory.createEmptyBorder());
-
-        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
-        topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        topPanel.add(inputPanel);
-        topPanel.add(flagPanel);
-        topPanel.add(buttonPanel);
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill=GridBagConstraints.HORIZONTAL;
-
-        gbc.gridx = 0; gbc.gridy = 0;
-        inputPanel.add(new JLabel("Square Length:"), gbc);
-        gbc.gridx = 1; gbc.gridy = 0;
-        inputPanel.add(sqrIntText, gbc);
-        gbc.gridx = 2; gbc.gridy = 0; gbc.weightx=0;
-        inputPanel.add(new JLabel("+"), gbc);
-        gbc.gridx = 3; gbc.gridy = 0;gbc.weightx=1.;
-        inputPanel.add(sqrSqrtText, gbc);
-        gbc.gridx = 4; gbc.gridy = 0;
-        inputPanel.add(new JLabel("√2"), gbc);
-        gbc.gridx = 0; gbc.gridy = 1;
-        inputPanel.add(new JLabel("Target ratio (optional):"), gbc);
-        gbc.gridx = 1; gbc.gridy = 1;
-        inputPanel.add(prefIntText, gbc);
-        gbc.gridx = 2; gbc.gridy = 1;gbc.weightx=0;
-        inputPanel.add(new JLabel("+"), gbc);
-        gbc.gridx = 3; gbc.gridy = 1;
-        inputPanel.add(prefSqrtText, gbc);
-        gbc.gridx = 4; gbc.gridy = 1;
-        inputPanel.add(new JLabel("√2"), gbc);
-
-        gbc.gridx = 0; gbc.gridy = 0;
-        flagPanel.add(new JLabel("Int flag:"), gbc);
-        gbc.gridx = 1; gbc.gridy = 0;
-        flagPanel.add(negIntCB, gbc);
-        gbc.gridx = 0; gbc.gridy = 1;
-        flagPanel.add(new JLabel("√2 flag:"), gbc);
-        gbc.gridx = 1; gbc.gridy = 1;
-        flagPanel.add(negSqrtCB, gbc);
-
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
-        buttonPanel.add(nextButton);
         nextButton.setEnabled(false);
-        buttonPanel.add(backButton);
         backButton.setEnabled(false);
-        buttonPanel.add(clearButton);
         clearButton.setEnabled(false);
-
-        findPanel.setLayout(new GridLayout());
-        findPanel.add(findButton);
-        topPanel.add(findPanel);
 
         findButton.addActionListener(e -> {
             int sqrInt;
@@ -189,25 +114,25 @@ public class MainFrame extends JFrame{
                                     }
 
                                     // negative integer flags
-                                    if(negIntCB.getSelectedIndex() == 1){
-                                        if((ixr1 < 0 || sqrInt - ixr1 < 0) && iyr1 < 0){
+                                    if (negIntCB.getSelectedIndex() == 1) {
+                                        if ((ixr1 < 0 || sqrInt - ixr1 < 0) && iyr1 < 0) {
                                             continue;
                                         }
                                     }
-                                    if(negIntCB.getSelectedIndex() == 2){
-                                        if(ixr1 < 0 || sqrInt - ixr1 < 0 || iyr1 < 0){
+                                    if (negIntCB.getSelectedIndex() == 2) {
+                                        if (ixr1 < 0 || sqrInt - ixr1 < 0 || iyr1 < 0) {
                                             continue;
                                         }
                                     }
 
                                     // negative sqrt(2) flags
-                                    if(negSqrtCB.getSelectedIndex() == 1){
-                                        if((ixr2 < 0 || sqrInt - ixr2 < 0) && iyr2 < 0){
+                                    if (negSqrtCB.getSelectedIndex() == 1) {
+                                        if ((ixr2 < 0 || sqrInt - ixr2 < 0) && iyr2 < 0) {
                                             continue;
                                         }
                                     }
-                                    if(negSqrtCB.getSelectedIndex() == 2){
-                                        if(ixr2 < 0 || sqrInt - ixr2 < 0 || iyr2 < 0){
+                                    if (negSqrtCB.getSelectedIndex() == 2) {
+                                        if (ixr2 < 0 || sqrInt - ixr2 < 0 || iyr2 < 0) {
                                             continue;
                                         }
                                     }
@@ -257,7 +182,7 @@ public class MainFrame extends JFrame{
         });
         nextButton.addActionListener(e -> {
             applicationModel.setResultIndex(applicationModel.getResultIndex() + 1);
-            if(applicationModel.getResultIndex() >= applicationModel.getResultData().size()){
+            if (applicationModel.getResultIndex() >= applicationModel.getResultData().size()) {
                 applicationModel.setResultIndex(0);
             }
             bottomPanel.validate();
@@ -265,7 +190,7 @@ public class MainFrame extends JFrame{
         });
         backButton.addActionListener(e -> {
             applicationModel.setResultIndex(applicationModel.getResultIndex() - 1);
-            if(applicationModel.getResultIndex() <= -1){
+            if (applicationModel.getResultIndex() <= -1) {
                 applicationModel.setResultIndex(applicationModel.getResultData().size() - 1);
             }
             bottomPanel.validate();
@@ -279,20 +204,15 @@ public class MainFrame extends JFrame{
             bottomPanel.validate();
             bottomPanel.repaint();
         });
-
-        setUpGlobalKeyBindings();
-
-        this.setVisible(true);
-        this.pack();
     }
 
-    public static boolean isPowerOfTwo(int n){
+    public static boolean isPowerOfTwo(int n) {
         if (n == 0)
             return false;
 
         double v = Math.log(n) / Math.log(2);
-        return (int)(Math.ceil(v))
-                == (int)(Math.floor(v));
+        return (int) (Math.ceil(v))
+                == (int) (Math.floor(v));
     }
 
     public static double round(double value, int places) {
@@ -303,11 +223,11 @@ public class MainFrame extends JFrame{
         return bd.doubleValue();
     }
 
-    public static void setIndividualPreset(Map<Double, PresetData> presetDict, double key, String ratio, double doubleNum, int intNum){
+    public static void setIndividualPreset(Map<Double, PresetData> presetDict, double key, String ratio, double doubleNum, int intNum) {
         presetDict.put(key, new PresetData(ratio, doubleNum, intNum));
     }
 
-    public static void initializePresetData(Map<Double, PresetData> presetDict){
+    public static void initializePresetData(Map<Double, PresetData> presetDict) {
         setIndividualPreset(presetDict, 1, "1:1", 1, 1);
         setIndividualPreset(presetDict, 0.5, "1:2", 0.5, 2);
         setIndividualPreset(presetDict, 2, "2:1", 2, 2);
@@ -368,35 +288,36 @@ public class MainFrame extends JFrame{
         setIndividualPreset(presetDict, 6.82843, "4+2√2:1", 6.82843, 5);
     }
 
-    public static PresetData preset(Map<Double, PresetData> presetDict, double key){
+    public static PresetData preset(Map<Double, PresetData> presetDict, double key) {
         return presetDict.containsKey(key) ? presetDict.get(key) : new PresetData("NA", 0, 0);
     }
 
-    public static String output(int n1, int n2){
+    public static String output(int n1, int n2) {
         String result = n2 + "√2";
 
-        if (n2 == 1) { result = "√2"; }
+        if (n2 == 1) {
+            result = "√2";
+        }
         if (n1 != 0) {
             result = n1 + "+" + result;
         }
-        if (n2 == 0){ result = Integer.toString(n1); }
+        if (n2 == 0) {
+            result = Integer.toString(n1);
+        }
 
         return result;
     }
 
     private void setUpGlobalKeyBindings() {
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e -> {
-            if(e.getID() == KeyEvent.KEY_RELEASED) {
+            if (e.getID() == KeyEvent.KEY_RELEASED) {
                 int keyCode = e.getKeyCode();
 
-                if(keyCode == KeyEvent.VK_RIGHT) {
+                if (keyCode == KeyEvent.VK_RIGHT) {
                     nextButton.doClick();
-                    return true;  // consume the event
-                } else if(keyCode == KeyEvent.VK_LEFT) {
+                    return true;
+                } else if (keyCode == KeyEvent.VK_LEFT) {
                     backButton.doClick();
-                    return true;  // consume the event
-                } else if(keyCode == KeyEvent.VK_F){
-                    findButton.doClick();
                     return true;
                 }
             }
@@ -404,4 +325,207 @@ public class MainFrame extends JFrame{
             return false;  // allow the event to be processed by other listeners
         });
     }
+
+    private void createUIComponents() {
+        panel1 = new JPanel();
+        this.add(panel1);
+        bottomPanel = new DrawPanel(applicationModel);
+    }
+
+    /**
+     * Method generated by IntelliJ IDEA GUI Designer
+     * >>> IMPORTANT!! <<<
+     * DO NOT edit this method OR call it in your code!
+     *
+     * @noinspection ALL
+     */
+    private void $$$setupUI$$$() {
+        createUIComponents();
+        panel1.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panel1.setPreferredSize(new Dimension(775, 650));
+        panel1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
+        final JSplitPane splitPane1 = new JSplitPane();
+        splitPane1.setOrientation(0);
+        splitPane1.setVisible(true);
+        panel1.add(splitPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(200, 200), null, 0, false));
+        splitPane1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
+        topPanel = new JPanel();
+        topPanel.setLayout(new GridLayoutManager(1, 6, new Insets(10, 10, 10, 10), -1, -1));
+        splitPane1.setLeftComponent(topPanel);
+        inputPanel = new JPanel();
+        inputPanel.setLayout(new GridBagLayout());
+        topPanel.add(inputPanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JLabel label1 = new JLabel();
+        label1.setText("Square length:");
+        GridBagConstraints gbc;
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        inputPanel.add(label1, gbc);
+        final JLabel label2 = new JLabel();
+        label2.setText("Target ratio (optional):");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        inputPanel.add(label2, gbc);
+        sqrIntText = new JTextField();
+        sqrIntText.setPreferredSize(new Dimension(60, 30));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        inputPanel.add(sqrIntText, gbc);
+        prefIntText = new JTextField();
+        prefIntText.setPreferredSize(new Dimension(60, 30));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        inputPanel.add(prefIntText, gbc);
+        final JLabel label3 = new JLabel();
+        label3.setText("+");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        inputPanel.add(label3, gbc);
+        final JLabel label4 = new JLabel();
+        label4.setText("+");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 2;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        inputPanel.add(label4, gbc);
+        sqrSqrtText = new JTextField();
+        sqrSqrtText.setPreferredSize(new Dimension(60, 30));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 3;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        inputPanel.add(sqrSqrtText, gbc);
+        prefSqrtText = new JTextField();
+        prefSqrtText.setPreferredSize(new Dimension(60, 30));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 3;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        inputPanel.add(prefSqrtText, gbc);
+        final JLabel label5 = new JLabel();
+        label5.setText("√2");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 4;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        inputPanel.add(label5, gbc);
+        final JLabel label6 = new JLabel();
+        label6.setText("√2");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 4;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        inputPanel.add(label6, gbc);
+        flagPanel = new JPanel();
+        flagPanel.setLayout(new GridBagLayout());
+        topPanel.add(flagPanel, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JLabel label7 = new JLabel();
+        label7.setText("Int flag:");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        flagPanel.add(label7, gbc);
+        final JLabel label8 = new JLabel();
+        label8.setText("√2 flag:");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        flagPanel.add(label8, gbc);
+        negIntCB = new JComboBox();
+        final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
+        defaultComboBoxModel1.addElement("None");
+        defaultComboBoxModel1.addElement("Allow -int on an axis");
+        defaultComboBoxModel1.addElement("No -int");
+        negIntCB.setModel(defaultComboBoxModel1);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        flagPanel.add(negIntCB, gbc);
+        negSqrtCB = new JComboBox();
+        final DefaultComboBoxModel defaultComboBoxModel2 = new DefaultComboBoxModel();
+        defaultComboBoxModel2.addElement("None");
+        defaultComboBoxModel2.addElement("Allow -√2 on an axis");
+        defaultComboBoxModel2.addElement("No -√2");
+        negSqrtCB.setModel(defaultComboBoxModel2);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        flagPanel.add(negSqrtCB, gbc);
+        buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayoutManager(3, 1, new Insets(0, 0, 0, 0), -1, -1));
+        topPanel.add(buttonPanel, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        nextButton = new JButton();
+        nextButton.setText("Next");
+        buttonPanel.add(nextButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        backButton = new JButton();
+        backButton.setText("Back");
+        buttonPanel.add(backButton, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        clearButton = new JButton();
+        clearButton.setText("Clear");
+        buttonPanel.add(clearButton, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        findPanel = new JPanel();
+        findPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        topPanel.add(findPanel, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        findButton = new JButton();
+        findButton.setLabel("Find");
+        findButton.setText("Find");
+        findPanel.add(findButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JSeparator separator1 = new JSeparator();
+        separator1.setOpaque(true);
+        separator1.setOrientation(1);
+        topPanel.add(separator1, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        final Spacer spacer1 = new Spacer();
+        topPanel.add(spacer1, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        splitPane1.setRightComponent(bottomPanel);
+    }
+
+    /**
+     * @noinspection ALL
+     */
+    public JComponent $$$getRootComponent$$$() {
+        return panel1;
+    }
+
 }
