@@ -310,7 +310,7 @@ public class MainFrame extends JFrame {
 
     private void setUpGlobalKeyBindings() {
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e -> {
-            if (e.getID() == KeyEvent.KEY_RELEASED) {
+            if (e.getID() == KeyEvent.KEY_PRESSED) {
                 int keyCode = e.getKeyCode();
 
                 if (keyCode == KeyEvent.VK_RIGHT) {
