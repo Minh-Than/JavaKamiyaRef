@@ -35,7 +35,6 @@ public class MainFrame extends JFrame {
 
     public Map<Double, PresetData> presetDict = new Hashtable<>();
     public ArrayList<ResultData> resultData;
-    private static int num;
 
     private final ApplicationModel applicationModel;
 
@@ -53,32 +52,20 @@ public class MainFrame extends JFrame {
         findButton.addActionListener(e -> {
             int sqrInt;
             int sqrSqrt;
-            int prefInt = 0;
-            int prefSqrt = 0;
+            int prefInt = Integer.parseInt(prefIntText.getText().isEmpty() ? "0" : prefIntText.getText());
+            int prefSqrt = Integer.parseInt(prefSqrtText.getText().isEmpty() ? "0" : prefSqrtText.getText());
 
-            // No pref
-            if (prefIntText.getText().isEmpty() && prefSqrtText.getText().isEmpty()) {
-                try {
-                    sqrInt = Integer.parseInt(sqrIntText.getText());
-                    sqrSqrt = Integer.parseInt(sqrSqrtText.getText());
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "The input must only be integer. Please try again.", "Wrong Input Format", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-            } // Has no input
-            else if (sqrIntText.getText().isEmpty() && sqrSqrtText.getText().isEmpty() && prefIntText.getText().isEmpty() && prefSqrtText.getText().isEmpty()) {
+            if (sqrIntText.getText().isEmpty() && sqrSqrtText.getText().isEmpty() && prefIntText.getText().isEmpty() && prefSqrtText.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Inputs are empty. Please try again.", "Empty Inputs", JOptionPane.WARNING_MESSAGE);
                 return;
-            } else { // Has pref
-                try {
-                    sqrInt = Integer.parseInt(sqrIntText.getText());
-                    sqrSqrt = Integer.parseInt(sqrSqrtText.getText());
-                    prefInt = Integer.parseInt(prefIntText.getText());
-                    prefSqrt = Integer.parseInt(prefSqrtText.getText());
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "The input must only be integer. Please try Again.", "Wrong Input Format", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
+            }
+
+            try {
+                sqrInt = Integer.parseInt(sqrIntText.getText());
+                sqrSqrt = Integer.parseInt(sqrSqrtText.getText());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "The input must only be integer. Please try again.", "Wrong Input Format", JOptionPane.WARNING_MESSAGE);
+                return;
             }
 
             // If is 2^n + 0*√2 (only power of 2)
@@ -94,7 +81,6 @@ public class MainFrame extends JFrame {
             double x1, x2, y;
             PresetData result1;
             PresetData result2;
-            num = 0;
 
             for (int ixr1 = 0; ixr1 < Math.ceil(papersize); ixr1++) {
                 for (int ixr2 = 0; ixr2 < Math.ceil(papersize / Math.sqrt(2)); ixr2++) {
@@ -114,29 +100,21 @@ public class MainFrame extends JFrame {
                                     }
 
                                     // negative integer flags
-                                    if (negIntCB.getSelectedIndex() == 1) {
-                                        if ((ixr1 < 0 || sqrInt - ixr1 < 0) && iyr1 < 0) {
-                                            continue;
-                                        }
+                                    if (negIntCB.getSelectedIndex() == 1 && ((ixr1 < 0 || sqrInt - ixr1 < 0) && iyr1 < 0)) {
+                                        continue;
                                     }
-                                    if (negIntCB.getSelectedIndex() == 2) {
-                                        if (ixr1 < 0 || sqrInt - ixr1 < 0 || iyr1 < 0) {
-                                            continue;
-                                        }
+                                    if (negIntCB.getSelectedIndex() == 2 && (ixr1 < 0 || sqrInt - ixr1 < 0 || iyr1 < 0)) {
+                                        continue;
                                     }
 
                                     // negative sqrt(2) flags
-                                    if (negSqrtCB.getSelectedIndex() == 1) {
-                                        if ((ixr2 < 0 || sqrInt - ixr2 < 0) && iyr2 < 0) {
-                                            continue;
-                                        }
+                                    if (negSqrtCB.getSelectedIndex() == 1 && ((ixr2 < 0 || sqrInt - ixr2 < 0) && iyr2 < 0)) {
+                                        continue;
                                     }
-                                    if (negSqrtCB.getSelectedIndex() == 2) {
-                                        if (ixr2 < 0 || sqrInt - ixr2 < 0 || iyr2 < 0) {
-                                            continue;
-                                        }
+                                    if (negSqrtCB.getSelectedIndex() == 2 && (ixr2 < 0 || sqrInt - ixr2 < 0 || iyr2 < 0)) {
+                                        continue;
                                     }
-                                    num += 1;
+
                                     ResultData tempRes = new ResultData(round(x1 / papersize, 5),
                                             round(y / papersize, 5),
                                             output(ixr1, ixr2),
@@ -168,7 +146,7 @@ public class MainFrame extends JFrame {
                     }
                 }
             }
-            if (num != 0) {
+            if (resultCount != 0) {
                 applicationModel.reset();
                 applicationModel.setResultData(resultData);
 

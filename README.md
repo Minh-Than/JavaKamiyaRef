@@ -34,7 +34,7 @@ Once the results are calculated, the first one will show up by default. to cycle
 If you want to clear the results to empty, click **Clear**.
 
 # TODO List:
-- [ ] Fix preferred ratio not being taken into results' orderings ***(IMPORTANT)***
+- [x] Fix preferred ratio not being taken into results' orderings *(Apparently working just fine I'm just blind)*
 - [x] Implement the flags *(mostly works but not completely for some reason)*
 - [x] Show the current result index somewhere
 - [x] Clear results to empty the panel *(Optional)*
