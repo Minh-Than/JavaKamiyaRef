@@ -3,15 +3,23 @@ package org.example;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 public class MainFrame extends JFrame {
@@ -205,65 +213,34 @@ public class MainFrame extends JFrame {
         presetDict.put(key, new PresetData(ratio, doubleNum, intNum));
     }
 
-    public static void initializePresetData(Map<Double, PresetData> presetDict) {
-        setIndividualPreset(presetDict, 1, "1:1", 1, 1);
-        setIndividualPreset(presetDict, 0.5, "1:2", 0.5, 2);
-        setIndividualPreset(presetDict, 2, "2:1", 2, 2);
-        setIndividualPreset(presetDict, 0.25, "1:4", 0.25, 3);
-        setIndividualPreset(presetDict, 0.75, "3:4", 0.75, 3);
-        setIndividualPreset(presetDict, 1.33333, "4:3", 1.33333, 3);
-        setIndividualPreset(presetDict, 4, "4:1", 4, 3);
-        setIndividualPreset(presetDict, 0.125, "1:8", 0.125, 4);
-        setIndividualPreset(presetDict, 0.375, "3:8", 0.375, 4);
-        setIndividualPreset(presetDict, 0.625, "5:8", 0.625, 4);
-        setIndividualPreset(presetDict, 0.875, "7:8", 0.875, 4);
-        setIndividualPreset(presetDict, 1.14286, "8:7", 1.14286, 4);
-        setIndividualPreset(presetDict, 1.6, "8:5", 1.6, 4);
-        setIndividualPreset(presetDict, 2.66667, "8:3", 2.66667, 4);
-        setIndividualPreset(presetDict, 8, "8:1", 8, 4);
-        setIndividualPreset(presetDict, 0.0625, "1:16", 0.0625, 5);
-        setIndividualPreset(presetDict, 0.1875, "3:16", 0.1875, 5);
-        setIndividualPreset(presetDict, 0.3125, "5:16", 0.3125, 5);
-        setIndividualPreset(presetDict, 0.4375, "7:16", 0.4375, 5);
-        setIndividualPreset(presetDict, 0.5625, "9:16", 0.5625, 5);
-        setIndividualPreset(presetDict, 0.6875, "11:16", 0.6875, 5);
-        setIndividualPreset(presetDict, 0.8125, "13:16", 0.8125, 5);
-        setIndividualPreset(presetDict, 0.9375, "15:16", 0.9375, 5);
-        setIndividualPreset(presetDict, 1.06667, "16:15", 1.06667, 5);
-        setIndividualPreset(presetDict, 1.23077, "16:13", 1.23077, 5);
-        setIndividualPreset(presetDict, 1.45455, "16:11", 1.45455, 5);
-        setIndividualPreset(presetDict, 1.77778, "16:9", 1.77778, 5);
-        setIndividualPreset(presetDict, 3.2, "16:5", 3.2, 5);
-        setIndividualPreset(presetDict, 5.33333, "16:3", 5.33333, 5);
-        setIndividualPreset(presetDict, 16, "16:1", 16, 5);
-        setIndividualPreset(presetDict, 0.17678, "1:4√2", 0.17678, 6);
-        setIndividualPreset(presetDict, 0.53033, "3:4√2", 0.53033, 6);
-        setIndividualPreset(presetDict, 0.35355, "1:2√2", 0.35355, 5);
-        setIndividualPreset(presetDict, 0.70711, "1:√2", 0.70711, 4);
-        setIndividualPreset(presetDict, 1.41421, "√2:1", 1.41421, 4);
-        setIndividualPreset(presetDict, 2.82843, "2√2:1", 2.82843, 5);
-        setIndividualPreset(presetDict, 1.88562, "4√2:3", 1.88562, 6);
-        setIndividualPreset(presetDict, 5.65685, "4√2:1", 5.65685, 6);
-        setIndividualPreset(presetDict, 0.2612, "1:2+√2", 0.2612, 3);
-        setIndividualPreset(presetDict, 0.41421, "1:1+√2", 0.41421, 2);
-        setIndividualPreset(presetDict, 0.58579, "2:2+√2", 0.58579, 3);
-        setIndividualPreset(presetDict, 1.54692, "4+2√2:3+√2", 1.54692, 5);
-        setIndividualPreset(presetDict, 0.64645, "3+√2:4+2√2", 0.64645, 5);
-        setIndividualPreset(presetDict, 4.82843, "2+2√2:1", 4.82843, 4);
-        setIndividualPreset(presetDict, 0.20711, "1:2+2√2", 0.20711, 4);
-        setIndividualPreset(presetDict, 1.70711, "2+√2:2", 1.70711, 3);
-        setIndividualPreset(presetDict, 2.41421, "1+√2:1", 2.41421, 2);
-        setIndividualPreset(presetDict, 3.41421, "2+√2:1", 3.41421, 4);
-        setIndividualPreset(presetDict, 1.2612, "2+2√2:1+2√2", 1.2612, 4);
-        setIndividualPreset(presetDict, 0.79289, "1+2√2:2+2√2", 0.79289, 4);
-        setIndividualPreset(presetDict, 1.20711, "1+√2:2", 1.20711, 4);
-        setIndividualPreset(presetDict, 0.82843, "2:1+√2", 0.82843, 4);
-        setIndividualPreset(presetDict, 0.17157, "1:3+2√2", 0.17157, 4);
-        setIndividualPreset(presetDict, 5.82843, "3+2√2:1", 5.82843, 4);
-        setIndividualPreset(presetDict, 1.17157, "4:2+√2", 1.17157, 5);
-        setIndividualPreset(presetDict, 0.85355, "2+√2:4", 0.85355, 5);
-        setIndividualPreset(presetDict, 0.14645, "1:4+2√2", 0.14645, 5);
-        setIndividualPreset(presetDict, 6.82843, "4+2√2:1", 6.82843, 5);
+    public void initializePresetData(Map<Double, PresetData> presetDict) {
+        try {
+            // Create an object of input stream reader class with CSV file as a parameter.
+            InputStream is = new FileInputStream("src/main/java/org/example/preset.csv");
+
+            assert is != null;
+            InputStreamReader inputStreamReader = new InputStreamReader(is);
+
+            // create csvParser object with custom separator semicolon
+            CSVParser parser = new CSVParserBuilder().withSeparator(',').build();
+
+            // create csvReader object with parameter
+            // file-reader and parser
+            List<String[]> allData;
+            try (CSVReader csvReader = new CSVReaderBuilder(inputStreamReader).withCSVParser(parser).build()) {
+                allData = csvReader.readAll(); // Read all data at once
+            }
+
+            for (String[] allDatum : allData) {
+                double key = Double.parseDouble(allDatum[0]);
+                String ratio = allDatum[1];
+                double doubleNum = Double.parseDouble(allDatum[2]);
+                int intNum = Integer.parseInt(allDatum[3]);
+                setIndividualPreset(presetDict, key, ratio, doubleNum, intNum);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static PresetData preset(Map<Double, PresetData> presetDict, double key) {
